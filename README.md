@@ -1,7 +1,3 @@
-Here is a README for the **GitHub Activity Tracker** (assumed to be a command-line tool for tracking GitHub events like pushes, issues, etc.):
-
----
-
 # GitHub Activity Tracker
 
 A command-line tool built in Golang to track your GitHub activities, such as commits, issues, pull requests, and more, for a given user.
@@ -76,16 +72,16 @@ github-activity <username>
 Example:
 
 ```bash
-github-activity kamranahmedse
+github-activity bronerone
 ```
 
 Output will show recent events, such as:
 
 ```
-- Pushed 3 commits to kamranahmedse/developer-roadmap
-- Opened a new issue in kamranahmedse/developer-roadmap
-- Starred kamranahmedse/developer-roadmap
-- Forked kamranahmedse/developer-roadmap
+- Pushed 3 commits to bronerone/project
+- Opened a new issue in bronerone/project
+- Starred bronerone/project
+- Forked bronerone/project
 ```
 
 ---
