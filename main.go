@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 )
 
 // Define structs for GitHub event data
@@ -131,7 +132,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	username := os.Args[1]
+	username := strings.Join(os.Args[1:], " ")
 
 	events, err := userActivity(username)
 	if err != nil {
