@@ -1,7 +1,3 @@
-Here is a README for the **GitHub Activity Tracker** (assumed to be a command-line tool for tracking GitHub events like pushes, issues, etc.):
-
----
-
 # GitHub Activity Tracker
 
 A command-line tool built in Golang to track your GitHub activities, such as commits, issues, pull requests, and more, for a given user.
