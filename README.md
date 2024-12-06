@@ -72,16 +72,16 @@ github-activity <username>
 Example:
 
 ```bash
-github-activity kamranahmedse
+github-activity bronerone
 ```
 
 Output will show recent events, such as:
 
 ```
-- Pushed 3 commits to kamranahmedse/developer-roadmap
-- Opened a new issue in kamranahmedse/developer-roadmap
-- Starred kamranahmedse/developer-roadmap
-- Forked kamranahmedse/developer-roadmap
+- Pushed 3 commits to bronerone/project
+- Opened a new issue in bronerone/project
+- Starred bronerone/project
+- Forked bronerone/project
 ```
 
 ---
