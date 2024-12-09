@@ -19,6 +19,7 @@ type Commit struct {
 
 type Payload struct {
 	Commits []Commit `json:"commits"`
+	Actions string   `json:"action"`
 }
 
 type Repo struct {
@@ -73,8 +74,13 @@ func summarizeActivity(events []GitHubEvent) {
 			repoEventCounts[repoName]["Push"] += len(event.Payload.Commits)
 		case "PullRequestEvent":
 			repoEventCounts[repoName]["Pull"] += 1
+		case "IssueCommentEvent":
+			repoEventCounts[repoName]["OpenIssue"] += 1
 		case "IssuesEvent":
-			repoEventCounts[repoName]["Issue"] += 1
+			issueState := event.Payload.Actions
+			if issueState == "closed" {
+				repoEventCounts[repoName]["ClosedIssue"] += 1
+			}
 		case "WatchEvent":
 			repoEventCounts[repoName]["Star"] += 1
 		case "ForkEvent":
@@ -92,13 +98,16 @@ func summarizeActivity(events []GitHubEvent) {
 
 	for repo, eventCounts := range repoEventCounts {
 		if pushCount, exists := eventCounts["Push"]; exists && pushCount > 0 {
-			fmt.Printf("- Pushed %d commits to %s\n", pushCount, repo)
+			fmt.Printf("- Pushed %d commit(s) to %s\n", pushCount, repo)
 		}
 		if pullCount, exists := eventCounts["Pull"]; exists && pullCount > 0 {
 			fmt.Printf("- Pulled %d from %s\n", pullCount, repo)
 		}
-		if issueCount, exists := eventCounts["Issue"]; exists && issueCount > 0 {
-			fmt.Printf("- Opened %d issue/s in %s\n", issueCount, repo)
+		if openIssueCount, exists := eventCounts["OpenIssue"]; exists && openIssueCount > 0 {
+			fmt.Printf("- Opened %d issue(s) in %s\n", openIssueCount, repo)
+		}
+		if closedIssueCount, exists := eventCounts["ClosedIssue"]; exists && closedIssueCount > 0 {
+			fmt.Printf("- Closed %d issue(s) in %s\n", closedIssueCount, repo)
 		}
 		if starCount, exists := eventCounts["Star"]; exists && starCount > 0 {
 			fmt.Printf("- Starred %s\n", repo)
