@@ -60,68 +60,64 @@ func userActivity(username string) ([]GitHubEvent, error) {
 }
 
 func summarizeActivity(events []GitHubEvent) {
-	eventSummary := map[string]int{
-		"Push":        0,
-		"PullRequest": 0,
-		"Issue":       0,
-		"Star":        0,
-		"Fork":        0,
-		"Create":      0,
-		"Delete":      0,
-		"Release":     0,
-		"Wiki":        0,
-	}
+	repoEventCounts := make(map[string]map[string]int)
 
 	for _, event := range events {
+		repoName := event.Repo.Name
+		if _, exists := repoEventCounts[repoName]; !exists {
+			repoEventCounts[repoName] = make(map[string]int)
+		}
+
 		switch event.Type {
 		case "PushEvent":
-			eventSummary["Push"] += len(event.Payload.Commits) // Count commits pushed
+			repoEventCounts[repoName]["Push"] += len(event.Payload.Commits)
 		case "PullRequestEvent":
-			eventSummary["PullRequest"] += 1 // Count pull requests
+			repoEventCounts[repoName]["Pull"] += 1
 		case "IssuesEvent":
-			eventSummary["Issue"] += 1 // Count issues opened/closed
+			repoEventCounts[repoName]["Issue"] += 1
 		case "WatchEvent":
-			eventSummary["Star"] += 1 // Count starred repositories
+			repoEventCounts[repoName]["Star"] += 1
 		case "ForkEvent":
-			eventSummary["Fork"] += 1 // Count forked repositories
+			repoEventCounts[repoName]["Fork"] += 1
 		case "CreateEvent":
-			eventSummary["Create"] += 1 // Count new branches or tags created
+			repoEventCounts[repoName]["Create"] += 1
 		case "DeleteEvent":
-			eventSummary["Delete"] += 1 // Count branches or tags deleted
+			repoEventCounts[repoName]["Delete"] += 1
 		case "ReleaseEvent":
-			eventSummary["Release"] += 1 // Count releases created or published
+			repoEventCounts[repoName]["Release"] += 1
 		case "GollumEvent":
-			eventSummary["Wiki"] += 1 // Count wiki page edits
+			repoEventCounts[repoName]["Wiki"] += 1
 		}
 	}
 
-	// Print the summarized activity
-	if eventSummary["Push"] > 0 {
-		fmt.Printf("- Pushed %d commits to %s\n", eventSummary["Push"], events[0].Repo.Name)
-	}
-	if eventSummary["PullRequest"] > 0 {
-		fmt.Printf("- Opened a pull request in %s\n", events[0].Repo.Name)
-	}
-	if eventSummary["Issue"] > 0 {
-		fmt.Printf("- Opened a new issue in %s\n", events[0].Repo.Name)
-	}
-	if eventSummary["Star"] > 0 {
-		fmt.Printf("- Starred %s\n", events[0].Repo.Name)
-	}
-	if eventSummary["Fork"] > 0 {
-		fmt.Printf("- Forked %s\n", events[0].Repo.Name)
-	}
-	if eventSummary["Create"] > 0 {
-		fmt.Printf("- Created a new branch or tag in %s\n", events[0].Repo.Name)
-	}
-	if eventSummary["Delete"] > 0 {
-		fmt.Printf("- Deleted a branch or tag in %s\n", events[0].Repo.Name)
-	}
-	if eventSummary["Release"] > 0 {
-		fmt.Printf("- Created or published a release in %s\n", events[0].Repo.Name)
-	}
-	if eventSummary["Wiki"] > 0 {
-		fmt.Printf("- Edited a wiki page in %s\n", events[0].Repo.Name)
+	for repo, eventCounts := range repoEventCounts {
+		if pushCount, exists := eventCounts["Push"]; exists && pushCount > 0 {
+			fmt.Printf("- Pushed %d commits to %s\n", pushCount, repo)
+		}
+		if pullCount, exists := eventCounts["Pull"]; exists && pullCount > 0 {
+			fmt.Printf("- Pulled %d from %s\n", pullCount, repo)
+		}
+		if issueCount, exists := eventCounts["Issue"]; exists && issueCount > 0 {
+			fmt.Printf("- Opened %d issue/s in %s\n", issueCount, repo)
+		}
+		if starCount, exists := eventCounts["Star"]; exists && starCount > 0 {
+			fmt.Printf("- Starred %s\n", repo)
+		}
+		if forkCount, exists := eventCounts["Fork"]; exists && forkCount > 0 {
+			fmt.Printf("- Forked %s\n", repo)
+		}
+		if createCount, exists := eventCounts["Create"]; exists && createCount > 0 {
+			fmt.Printf("- Created %s\n", repo)
+		}
+		if deleteCount, exists := eventCounts["Delete"]; exists && deleteCount > 0 {
+			fmt.Printf("- Deleted %s\n", repo)
+		}
+		if releaseCount, exists := eventCounts["Release"]; exists && releaseCount > 0 {
+			fmt.Printf("- Released %s\n", repo)
+		}
+		if wikiCount, exists := eventCounts["Wiki"]; exists && wikiCount > 0 {
+			fmt.Printf("- Wiki-ed %s\n", repo)
+		}
 	}
 }
 
@@ -135,8 +131,7 @@ func main() {
 
 	events, err := userActivity(username)
 	if err != nil {
-		fmt.Println("Error:", err)
-		os.Exit(1)
+		fmt.Println("Error: username does not exist")
 	}
 
 	summarizeActivity(events)
