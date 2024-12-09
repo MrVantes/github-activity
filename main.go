@@ -75,9 +75,12 @@ func summarizeActivity(events []GitHubEvent) {
 		case "PullRequestEvent":
 			repoEventCounts[repoName]["Pull"] += 1
 		case "IssueCommentEvent":
-			repoEventCounts[repoName]["OpenIssue"] += 1
+			repoEventCounts[repoName]["CommentIssue"] += 1
 		case "IssuesEvent":
 			issueState := event.Payload.Actions
+			if issueState == "opened" {
+				repoEventCounts[repoName]["OpenIssue"] += 1
+			}
 			if issueState == "closed" {
 				repoEventCounts[repoName]["ClosedIssue"] += 1
 			}
@@ -108,6 +111,9 @@ func summarizeActivity(events []GitHubEvent) {
 		}
 		if closedIssueCount, exists := eventCounts["ClosedIssue"]; exists && closedIssueCount > 0 {
 			fmt.Printf("- Closed %d issue(s) in %s\n", closedIssueCount, repo)
+		}
+		if commentIssueCount, exists := eventCounts["CommentIssue"]; exists && commentIssueCount-eventCounts["OpenIssue"] > 0 {
+			fmt.Printf("- Commented %d time(s) in %s issues\n", commentIssueCount, repo)
 		}
 		if starCount, exists := eventCounts["Star"]; exists && starCount > 0 {
 			fmt.Printf("- Starred %s\n", repo)
