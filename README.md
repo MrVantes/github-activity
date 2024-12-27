@@ -97,5 +97,3 @@ Feel free to fork the repository, submit issues, or create pull requests. Contri
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
-
-This README provides clear instructions on how to build, install, and use the GitHub Activity Tracker with a variety of common commands. It includes sections for installation on different operating systems, usage examples, and options to filter or get more detailed information.
